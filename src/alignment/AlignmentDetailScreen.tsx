@@ -14,24 +14,24 @@ export function AlignmentDetailScreen() {
   const [revealedEvidence, setRevealedEvidence] = useState<Set<string>>(() => new Set());
 
   if (alignment.isPending) {
-    return <AsyncState kind="loading" title="Loading Alignment Diff" message="Retrieving the existing agreement, proposed change, and verified evidence." />;
+    return <AsyncState kind="loading" title="Alignment Diff 로딩 중" message="기존 합의, 제안된 변경, 검증된 근거를 불러오고 있습니다." />;
   }
   if (alignment.isError || !alignment.data) {
     return (
       <AsyncState
-        actionLabel="Retry"
+        actionLabel="다시 시도"
         kind="error"
-        message="The alignment detail could not be loaded."
+        message="Alignment 상세 정보를 불러올 수 없습니다."
         onAction={() => void alignment.refetch()}
-        title="Alignment unavailable"
+        title="Alignment 로드 실패"
       />
     );
   }
 
   const finding = alignment.data.findings[0];
   const allEvidence = alignment.data.findings.flatMap((item) => item.evidence);
-  const existingAgreement = finding?.evidence[0]?.exactQuote ?? "No conflicting active agreement was identified.";
-  const proposedChange = finding?.explanation ?? "The proposed change is consistent with the current recorded context.";
+  const existingAgreement = finding?.evidence[0]?.exactQuote ?? "충돌하는 활성 합의가 식별되지 않았습니다.";
+  const proposedChange = finding?.explanation ?? "제안된 변경이 현재 기록된 맥락과 일치합니다.";
 
   const toggleEvidence = (findingId: string) => {
     setRevealedEvidence((current) => {
@@ -46,23 +46,23 @@ export function AlignmentDetailScreen() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <div>
-          <Link to="/memory">← Project Memory</Link>
-          <p>Pull request #{alignment.data.prNumber} · revision {alignment.data.knowledgeRevision}</p>
+          <Link to="/memory">← 프로젝트 메모리</Link>
+          <p>Pull Request #{alignment.data.prNumber} · revision {alignment.data.knowledgeRevision}</p>
           <h1>Alignment Diff</h1>
         </div>
         <StatusBadge status={alignment.data.outcome} />
       </header>
 
-      <section className={styles.diffHero} aria-label="Alignment Diff comparison">
+      <section className={styles.diffHero} aria-label="Alignment Diff 비교">
         <article>
-          <div className={styles.diffLabel}><span aria-hidden="true">◀</span> Existing agreement</div>
-          <h2>{finding?.targetNodeType === "decision" ? "Active decision" : "Recorded project context"}</h2>
+          <div className={styles.diffLabel}><span aria-hidden="true">◀</span> 기존 합의</div>
+          <h2>{finding?.targetNodeType === "decision" ? "활성 Decision" : "기록된 프로젝트 맥락"}</h2>
           <blockquote>{existingAgreement}</blockquote>
           <small>Knowledge revision {alignment.data.knowledgeRevision} · {finding?.targetNodeStatus ?? "active"}</small>
         </article>
         <div className={styles.divider} aria-hidden="true">≠</div>
         <article>
-          <div className={styles.diffLabel}><span aria-hidden="true">▶</span> Proposed change</div>
+          <div className={styles.diffLabel}><span aria-hidden="true">▶</span> 제안된 변경</div>
           <h2>PR #{alignment.data.prNumber}</h2>
           <p>{proposedChange}</p>
           <small>Head {alignment.data.headSha.slice(0, 8)}</small>
@@ -75,41 +75,41 @@ export function AlignmentDetailScreen() {
             <div>
               <span className={styles.sectionIcon} aria-hidden="true">!</span>
               <div>
-                <p>Impact</p>
-                <h2>Why this change needs alignment</h2>
+                <p>영향</p>
+                <h2>이 변경이 Alignment이 필요한 이유</h2>
               </div>
             </div>
-            <p>{finding?.explanation ?? "No supported conflict was found."}</p>
+            <p>{finding?.explanation ?? "검증된 충돌이 발견되지 않았습니다."}</p>
           </section>
 
           <section className={styles.explanationCard}>
             <div>
               <span className={styles.sectionIcon} aria-hidden="true">→</span>
               <div>
-                <p>Next action</p>
-                <h2>Resolve before merge</h2>
+                <p>다음 조치</p>
+                <h2>Merge 전 해결 필요</h2>
               </div>
             </div>
-            <p>{finding?.recommendedAction ?? "Continue normal review and merge when project checks pass."}</p>
+            <p>{finding?.recommendedAction ?? "정상적으로 리뷰하고, 프로젝트 검사가 통과하면 merge하세요."}</p>
           </section>
 
           <section className={styles.evidenceCard} aria-labelledby="evidence-heading">
             <div className={styles.evidenceHeader}>
               <div>
-                <p>Source record</p>
-                <h2 id="evidence-heading">Verified evidence</h2>
+                <p>소스 기록</p>
+                <h2 id="evidence-heading">검증된 근거</h2>
               </div>
-              <span><span aria-hidden="true">✓</span> Exact quote verified</span>
+              <span><span aria-hidden="true">✓</span> 정확한 인용문 검증됨</span>
             </div>
             {alignment.data.findings.length ? alignment.data.findings.map((item) => (
               <article key={item.id}>
                 <div className={styles.evidenceSummary}>
                   <div>
-                    <strong>{item.targetNodeType ?? "context"} evidence</strong>
-                    <p>{item.evidence.length} immutable source {item.evidence.length === 1 ? "version" : "versions"}</p>
+                    <strong>{item.targetNodeType ?? "context"} 근거</strong>
+                    <p>{item.evidence.length}개의 불변 소스 버전</p>
                   </div>
                   <button onClick={() => toggleEvidence(item.id)} type="button">
-                    {revealedEvidence.has(item.id) ? "Hide source evidence" : "Reveal source evidence"}
+                    {revealedEvidence.has(item.id) ? "소스 근거 숨기기" : "소스 근거 보기"}
                   </button>
                 </div>
                 {revealedEvidence.has(item.id) ? (
@@ -117,20 +117,20 @@ export function AlignmentDetailScreen() {
                     {item.evidence.map((source) => (
                       <div key={`${source.sourceVersionId}-${source.exactQuote}`}>
                         <blockquote>{source.exactQuote}</blockquote>
-                        <a href={source.url} rel="noreferrer" target="_blank">Open original source URL <span aria-hidden="true">↗</span></a>
-                        <small>Source version {source.sourceVersionId.slice(0, 8)} · {source.role} · {source.verified ? "verified" : "unverified"}</small>
+                        <a href={source.url} rel="noreferrer" target="_blank">원본 소스 URL 열기 <span aria-hidden="true">↗</span></a>
+                        <small>소스 버전 {source.sourceVersionId.slice(0, 8)} · {source.role} · {source.verified ? "검증됨" : "미검증"}</small>
                       </div>
                     ))}
                   </div>
                 ) : null}
               </article>
-            )) : <p className={styles.emptyEvidence}>○ This aligned result did not require contradictory evidence.</p>}
+            )) : <p className={styles.emptyEvidence}>○ Aligned 결과에는 충돌 근거가 필요하지 않습니다.</p>}
           </section>
 
           {finding?.targetNodeId ? (
             <Link className={styles.graphLink} to={`/graph?focus=${finding.targetNodeId}`}>
               <span aria-hidden="true">⌘</span>
-              <span><strong>See this decision in context</strong><small>Open the relevant one/two-hop Knowledge Graph.</small></span>
+              <span><strong>이 Decision을 맥락에서 보기</strong><small>관련 1~2 홉 Knowledge Graph를 엽니다.</small></span>
               <span aria-hidden="true">→</span>
             </Link>
           ) : null}

@@ -60,24 +60,24 @@ export function KnowledgeGraphScreen() {
   );
 
   if (repositories.isPending || graph.isPending) {
-    return <AsyncState kind="loading" title="Laying out relevant knowledge" message="Loading the selected node and its one/two-hop evidence relationships." />;
+    return <AsyncState kind="loading" title="관련 지식 배치 중" message="선택된 노드와 1~2홉 근거 관계를 로딩하고 있습니다." />;
   }
   if (repositories.isError || graph.isError) {
     return (
       <AsyncState
-        actionLabel="Retry"
+        actionLabel="다시 시도"
         kind="error"
-        message="The knowledge graph could not be loaded."
+        message="Knowledge Graph를 불러올 수 없습니다."
         onAction={() => {
           void repositories.refetch();
           void graph.refetch();
         }}
-        title="Knowledge Graph unavailable"
+        title="Knowledge Graph 로드 실패"
       />
     );
   }
   if (!visibleGraph || !activeNodeId || visibleGraph.nodes.length === 0) {
-    return <AsyncState title="No knowledge nodes yet" message="Complete Initial Sync to create the first relevant graph." />;
+    return <AsyncState title="아직 Knowledge Node가 없습니다" message="Initial Sync를 완료하면 첫 번째 그래프가 생성됩니다." />;
   }
 
   const selectedNode = graph.data?.nodes.find((node) => node.id === activeNodeId);
@@ -87,18 +87,18 @@ export function KnowledgeGraphScreen() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <div>
-          <p>Explanation surface · one/two hops</p>
+          <p>설명 화면 · 1~2홉</p>
           <h1>Knowledge Graph</h1>
-          <span>{visibleGraph.nodes.length} relevant nodes from revision {graph.data?.knowledgeRevision}</span>
+          <span>revision {graph.data?.knowledgeRevision}에서 {visibleGraph.nodes.length}개의 관련 노드</span>
         </div>
-        <Link to="/memory">← Back to conflicts</Link>
+        <Link to="/memory">← 충돌 목록으로</Link>
       </header>
 
       <div className={styles.graphLayout}>
-        <section className={styles.canvas} aria-label="Relevant project knowledge graph">
+        <section className={styles.canvas} aria-label="관련 프로젝트 지식 그래프">
           <div className={styles.canvasHeader}>
-            <div><span aria-hidden="true">⌘</span><strong>Relevant subgraph</strong></div>
-            <p>Select a node to center its two-hop context.</p>
+            <div><span aria-hidden="true">⌘</span><strong>관련 서브그래프</strong></div>
+            <p>노드를 선택하면 2홉 맥락이 중심에 표시됩니다.</p>
           </div>
           <div className={styles.flowArea}>
             <ReactFlow
@@ -133,16 +133,16 @@ export function KnowledgeGraphScreen() {
               <dl>
                 <div><dt>Revision</dt><dd>{selectedNode.revision}</dd></div>
                 <div><dt>Logical key</dt><dd>{selectedNode.logicalKey}</dd></div>
-                <div><dt>Evidence</dt><dd>{selectedNode.evidence.length} source</dd></div>
+                <div><dt>근거</dt><dd>{selectedNode.evidence.length}개 소스</dd></div>
               </dl>
               {selectedNode.evidence[0] ? (
                 <blockquote>{selectedNode.evidence[0].exactQuote}</blockquote>
               ) : null}
               {relatedAlignment ? (
-                <Link to={`/alignments/${relatedAlignment.id}`}>Open Alignment Diff <span aria-hidden="true">→</span></Link>
+                <Link to={`/alignments/${relatedAlignment.id}`}>Alignment Diff 열기 <span aria-hidden="true">→</span></Link>
               ) : null}
             </>
-          ) : <p>○ Select a node to inspect its evidence.</p>}
+          ) : <p>○ 노드를 선택하면 근거를 확인할 수 있습니다.</p>}
         </aside>
       </div>
     </div>
