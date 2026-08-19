@@ -19,16 +19,16 @@ export function ConnectScreen() {
   const job = useJob(jobId);
 
   if (repositories.isPending) {
-    return <AsyncState kind="loading" title="Loading connection state" message="Checking GitHub repositories and installation access." />;
+    return <AsyncState kind="loading" title="연결 상태 확인 중" message="GitHub 저장소 및 설치 접근 권한을 확인하고 있습니다." />;
   }
   if (repositories.isError) {
     return (
       <AsyncState
-        actionLabel="Retry"
+        actionLabel="다시 시도"
         kind="error"
-        message="Repository access could not be loaded. Reconnect or retry the request."
+        message="저장소 접근 정보를 불러올 수 없습니다. 다시 연결하거나 재시도해주세요."
         onAction={() => void repositories.refetch()}
-        title="Connection check failed"
+        title="연결 확인 실패"
       />
     );
   }
@@ -45,9 +45,9 @@ export function ConnectScreen() {
   return (
     <div className={styles.page}>
       <header className={styles.pageHeader}>
-        <p>Repository setup</p>
-        <h1>Connect project memory</h1>
-        <span>Authorize one repository, then build its first evidence-backed knowledge revision.</span>
+        <p>저장소 설정</p>
+        <h1>프로젝트 메모리 연결</h1>
+        <span>하나의 저장소를 인증하고, 근거 기반 지식의 첫 번째 리비전을 생성합니다.</span>
       </header>
 
       <div className={styles.steps}>
@@ -57,15 +57,15 @@ export function ConnectScreen() {
           <div className={styles.stepCopy}>
             <span className={styles.stepIcon} aria-hidden="true">2</span>
             <div>
-              <h2>Install the GitHub App</h2>
-              <p>Grant read and workflow dispatch access to one selected repository.</p>
+              <h2>GitHub App 설치</h2>
+              <p>선택한 저장소에 읽기 및 workflow dispatch 접근 권한을 부여합니다.</p>
             </div>
           </div>
           {installed ? (
-            <span className={styles.complete}><span aria-hidden="true">✓</span> App installed</span>
+            <span className={styles.complete}><span aria-hidden="true">✓</span> App 설치 완료</span>
           ) : (
             <button disabled={!connected} onClick={() => setInstalled(true)} type="button">
-              Install GitHub App
+              GitHub App 설치
             </button>
           )}
         </section>
@@ -74,13 +74,13 @@ export function ConnectScreen() {
           <div className={styles.stepCopy}>
             <span className={styles.stepIcon} aria-hidden="true">3</span>
             <div>
-              <h2>Select repository</h2>
-              <p>The MVP keeps one public repository as the explicit product boundary.</p>
+              <h2>저장소 선택</h2>
+              <p>MVP는 하나의 공개 저장소를 명시적 제품 경계로 유지합니다.</p>
             </div>
           </div>
           {available.length ? (
             <label className={styles.selectLabel}>
-              <span>Repository</span>
+              <span>저장소</span>
               <select
                 disabled={!installed}
                 onChange={(event) => setRepositoryId(event.target.value)}
@@ -92,7 +92,7 @@ export function ConnectScreen() {
               </select>
             </label>
           ) : (
-            <p className={styles.empty}>○ No installed repositories were found.</p>
+            <p className={styles.empty}>○ 설치된 저장소가 없습니다.</p>
           )}
         </section>
 
@@ -102,7 +102,7 @@ export function ConnectScreen() {
               <span className={styles.stepIcon} aria-hidden="true">4</span>
               <div>
                 <h2>Initial Sync</h2>
-                <p>Collect allowed GitHub records and poll until the generated memory is written.</p>
+                <p>허용된 GitHub 기록을 수집하고, 생성된 메모리가 기록될 때까지 폴링합니다.</p>
               </div>
             </div>
             <button
@@ -110,15 +110,15 @@ export function ConnectScreen() {
               onClick={() => void handleSync()}
               type="button"
             >
-              {sync.isPending ? "Starting…" : "Start Initial Sync"}
+              {sync.isPending ? "시작 중…" : "Initial Sync 시작"}
             </button>
           </div>
 
           {sync.isError ? (
             <div className={styles.inlineError} role="alert">
               <span aria-hidden="true">!</span>
-              <span>Sync could not start. {sync.error.message}</span>
-              <button onClick={() => sync.reset()} type="button">Retry setup</button>
+              <span>Sync를 시작할 수 없습니다. {sync.error.message}</span>
+              <button onClick={() => sync.reset()} type="button">다시 시도</button>
             </div>
           ) : null}
 
@@ -129,15 +129,15 @@ export function ConnectScreen() {
                 <strong>{job.data.progress}%</strong>
               </div>
               <progress max="100" value={job.data.progress}>{job.data.progress}%</progress>
-              <p>Polling job {job.data.jobId.slice(0, 8)}… until a terminal state is recorded.</p>
+              <p>작업 {job.data.jobId.slice(0, 8)}… 을 폴링 중입니다.</p>
             </div>
           ) : null}
 
           {job.isError ? (
             <div className={styles.inlineError} role="alert">
               <span aria-hidden="true">!</span>
-              <span>Progress could not be loaded.</span>
-              <button onClick={() => void job.refetch()} type="button">Retry polling</button>
+              <span>진행 상태를 불러올 수 없습니다.</span>
+              <button onClick={() => void job.refetch()} type="button">재시도</button>
             </div>
           ) : null}
         </section>

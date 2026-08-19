@@ -24,30 +24,30 @@ export function ContextPassportPanel({
     <aside className={styles.panel} aria-labelledby="passport-heading">
       <div className={styles.header}>
         <div>
-          <p>Handoff context</p>
+          <p>인수인계 맥락</p>
           <h2 id="passport-heading">Context Passport</h2>
         </div>
         <span className={styles.passportIcon} aria-hidden="true">▣</span>
       </div>
 
-      {passport.isPending ? <p className={styles.state}>↻ Loading declared context…</p> : null}
+      {passport.isPending ? <p className={styles.state}>↻ 맥락 정보 로딩 중…</p> : null}
       {passport.isError ? (
         <div className={styles.state} role="alert">
-          <span>! Passport could not be loaded.</span>
-          <button onClick={() => void passport.refetch()} type="button">Retry</button>
+          <span>! Passport를 불러올 수 없습니다.</span>
+          <button onClick={() => void passport.refetch()} type="button">재시도</button>
         </div>
       ) : null}
       {passport.data ? (
         <>
           <dl className={styles.attributes}>
-            <div><dt>Preferred language</dt><dd>{passport.data.language === "en" ? "English" : passport.data.language} · self-declared</dd></div>
-            <div><dt>Timezone</dt><dd>{declaredContext.timezone} · self-declared</dd></div>
-            <div><dt>Role</dt><dd>{declaredContext.role}</dd></div>
-            <div><dt>Ownership</dt><dd>{declaredContext.ownership}</dd></div>
+            <div><dt>선호 언어</dt><dd>{passport.data.language === "en" ? "English" : passport.data.language === "ko" ? "한국어" : passport.data.language} · 자기 선언</dd></div>
+            <div><dt>시간대</dt><dd>{declaredContext.timezone} · 자기 선언</dd></div>
+            <div><dt>역할</dt><dd>{declaredContext.role}</dd></div>
+            <div><dt>담당 범위</dt><dd>{declaredContext.ownership}</dd></div>
           </dl>
 
           <div className={styles.handoff}>
-            <h3>Why this matters</h3>
+            <h3>왜 중요한가</h3>
             <p>{passport.data.content}</p>
           </div>
 
@@ -57,7 +57,7 @@ export function ContextPassportPanel({
               onChange={(event) => setShowOriginal(event.target.checked)}
               type="checkbox"
             />
-            <span>Show original evidence in Passport</span>
+            <span>Passport에 원본 근거 표시</span>
           </label>
 
           {showOriginal ? (
@@ -69,10 +69,10 @@ export function ContextPassportPanel({
           ) : null}
 
           <div className={styles.questions}>
-            <h3>Unresolved questions</h3>
+            <h3>미해결 질문</h3>
             {passport.data.ambiguities.length ? (
               <ul>{passport.data.ambiguities.map((item) => <li key={item}>{item}</li>)}</ul>
-            ) : <p>○ No unresolved questions were recorded.</p>}
+            ) : <p>○ 기록된 미해결 질문이 없습니다.</p>}
           </div>
         </>
       ) : null}

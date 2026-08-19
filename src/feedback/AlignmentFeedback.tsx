@@ -5,9 +5,9 @@ import { useHandshake, useOverride } from "./api";
 import styles from "./AlignmentFeedback.module.css";
 
 const handshakeOptions: Array<{ value: Handshake["response"]; label: string; help: string }> = [
-  { value: "agree", label: "Agree", help: "I understand and support the recorded direction." },
-  { value: "needs_clarification", label: "Needs clarification", help: "I need more context before aligning." },
-  { value: "disagree", label: "Disagree", help: "My recorded position differs from this change." },
+  { value: "agree", label: "동의", help: "기록된 방향을 이해하고 지지합니다." },
+  { value: "needs_clarification", label: "확인 필요", help: "정렬하기 전에 더 많은 맥락이 필요합니다." },
+  { value: "disagree", label: "반대", help: "이 변경에 대한 나의 입장이 다릅니다." },
 ];
 
 export function AlignmentFeedback({ alignmentId }: { alignmentId: string }) {
@@ -40,13 +40,13 @@ export function AlignmentFeedback({ alignmentId }: { alignmentId: string }) {
         <div className={styles.formHeader}>
           <span className={styles.formIcon} aria-hidden="true">↔</span>
           <div>
-            <p>Team response</p>
+            <p>팀 응답</p>
             <h2>Handshake</h2>
           </div>
         </div>
-        <p className={styles.description}>Record whether you align with the shared context. This does not alter the AI finding.</p>
+        <p className={styles.description}>공유된 맥락에 동의하는지 기록합니다. AI 판정을 변경하지 않습니다.</p>
         <fieldset>
-          <legend>Handshake response</legend>
+          <legend>Handshake 응답</legend>
           {handshakeOptions.map((option) => (
             <label key={option.value}>
               <input
@@ -61,13 +61,13 @@ export function AlignmentFeedback({ alignmentId }: { alignmentId: string }) {
           ))}
         </fieldset>
         <label className={styles.field}>
-          <span>Optional note</span>
+          <span>메모 (선택)</span>
           <textarea onChange={(event) => setMessage(event.target.value)} rows={3} value={message} />
         </label>
         {handshake.isError ? <p className={styles.error} role="alert">! {handshake.error.message}</p> : null}
-        {handshakeSaved ? <p className={styles.success} role="status">✓ Handshake recorded as append-only evidence.</p> : null}
+        {handshakeSaved ? <p className={styles.success} role="status">✓ Handshake가 추가 전용 근거로 기록되었습니다.</p> : null}
         <button className={styles.primary} disabled={handshake.isPending} type="submit">
-          {handshake.isPending ? "Recording…" : "Record Handshake"}
+          {handshake.isPending ? "기록 중…" : "Handshake 기록"}
         </button>
       </form>
 
@@ -75,27 +75,27 @@ export function AlignmentFeedback({ alignmentId }: { alignmentId: string }) {
         <div className={styles.formHeader}>
           <span className={styles.formIcon} aria-hidden="true">!</span>
           <div>
-            <p>Human correction</p>
+            <p>사람의 교정</p>
             <h2>Override</h2>
           </div>
         </div>
-        <p className={styles.description}>Correct or supersede the finding. The prior finding remains in history and a reason is required.</p>
+        <p className={styles.description}>판정을 교정하거나 기존 결정을 대체합니다. 이전 판정은 기록에 유지되며, 사유가 필수입니다.</p>
         <label className={styles.field}>
-          <span>Override type</span>
+          <span>Override 유형</span>
           <select onChange={(event) => setOverrideType(event.target.value as Override["overrideType"])} value={overrideType}>
-            <option value="false_positive">False positive</option>
-            <option value="supersede_decision">Supersede decision</option>
-            <option value="insufficient_evidence">Insufficient evidence</option>
+            <option value="false_positive">False positive (오판)</option>
+            <option value="supersede_decision">Decision 대체</option>
+            <option value="insufficient_evidence">근거 부족</option>
           </select>
         </label>
         <label className={styles.field}>
-          <span>Override reason <strong>Required</strong></span>
+          <span>Override 사유 <strong>필수</strong></span>
           <textarea onChange={(event) => setReason(event.target.value)} required rows={5} value={reason} />
         </label>
         {override.isError ? <p className={styles.error} role="alert">! {override.error.message}</p> : null}
-        {overrideSaved ? <p className={styles.success} role="status">✓ Override recorded without deleting prior evidence.</p> : null}
+        {overrideSaved ? <p className={styles.success} role="status">✓ Override가 기존 근거를 삭제하지 않고 기록되었습니다.</p> : null}
         <button className={styles.secondary} disabled={override.isPending || !reason.trim()} type="submit">
-          {override.isPending ? "Recording…" : "Submit Override"}
+          {override.isPending ? "기록 중…" : "Override 제출"}
         </button>
       </form>
     </section>

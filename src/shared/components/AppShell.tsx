@@ -5,8 +5,8 @@ import { isFixtureMode } from "../api/client";
 import styles from "./AppShell.module.css";
 
 const navigation = [
-  { to: "/connect", icon: "↗", label: "Connect" },
-  { to: "/memory", icon: "▤", label: "Project Memory" },
+  { to: "/connect", icon: "↗", label: "연결" },
+  { to: "/memory", icon: "▤", label: "프로젝트 메모리" },
   { to: "/graph", icon: "⌘", label: "Knowledge Graph" },
 ];
 
@@ -18,20 +18,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className={styles.mark} aria-hidden="true">AM</span>
           <span>
             <strong>Alignment Memory</strong>
-            <small>Evidence-backed project context</small>
+            <small>근거 기반 프로젝트 기억 시스템</small>
           </span>
         </NavLink>
         <div className={styles.topbarMeta}>
-          {isFixtureMode ? <span className={styles.fixture}>◆ Fixture data</span> : null}
-          <span className={styles.identity} aria-label="Signed in profile">
+          {isFixtureMode ? <span className={styles.fixture}>◆ Fixture 데이터</span> : null}
+          <span className={styles.identity} aria-label="로그인된 프로필">
             KG
           </span>
         </div>
       </header>
       <div className={styles.workspace}>
         <aside className={styles.sidebar}>
-          <p className={styles.navLabel}>Workspace</p>
-          <nav aria-label="Primary navigation">
+          <p className={styles.navLabel}>워크스페이스</p>
+          <nav aria-label="주요 내비게이션">
             {navigation.map((item) => (
               <NavLink
                 className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ""}`}
@@ -46,8 +46,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className={styles.repositoryCard}>
             <span className={styles.repositoryIcon} aria-hidden="true">⌂</span>
             <span>
-              <small>Active repository</small>
-              <strong>alignment-memory-demo</strong>
+              <small>활성 저장소</small>
+              <strong>alignment-memory-be</strong>
             </span>
           </div>
         </aside>

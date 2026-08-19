@@ -8,7 +8,7 @@ import { orderAlignments } from "./priority";
 import styles from "./ProjectMemoryScreen.module.css";
 
 function formatTime(value: string) {
-  return new Intl.DateTimeFormat("en-CA", {
+  return new Intl.DateTimeFormat("ko-KR", {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -23,29 +23,29 @@ export function ProjectMemoryScreen() {
   const knowledge = useDashboardKnowledge(repositoryId);
 
   if (repositories.isPending || dashboard.isPending) {
-    return <AsyncState kind="loading" title="Building Project Memory" message="Loading active decisions, conflicts, and recent accumulation." />;
+    return <AsyncState kind="loading" title="프로젝트 메모리 구성 중" message="활성 결정, 충돌 내역, 최근 기록을 불러오고 있습니다." />;
   }
   if (repositories.isError || dashboard.isError) {
     return (
       <AsyncState
-        actionLabel="Retry"
+        actionLabel="다시 시도"
         kind="error"
-        message="Project Memory could not be loaded from the repository API."
+        message="저장소 API에서 프로젝트 메모리를 불러올 수 없습니다."
         onAction={() => {
           void repositories.refetch();
           void dashboard.refetch();
         }}
-        title="Project Memory unavailable"
+        title="프로젝트 메모리 로드 실패"
       />
     );
   }
   if (!repositoryId || !dashboard.data) {
     return (
       <AsyncState
-        actionLabel="Connect repository"
-        message="Install the GitHub App and select a repository before building project memory."
+        actionLabel="저장소 연결"
+        message="프로젝트 메모리를 구성하려면 먼저 GitHub App을 설치하고 저장소를 선택하세요."
         onAction={() => { window.location.href = "/connect"; }}
-        title="No repository connected"
+        title="연결된 저장소 없음"
       />
     );
   }
@@ -60,58 +60,58 @@ export function ProjectMemoryScreen() {
     <div className={styles.page}>
       <header className={styles.pageHeader}>
         <div>
-          <p>Repository · {dashboard.data.repository.fullName}</p>
-          <h1>Project Memory</h1>
+          <p>저장소 · {dashboard.data.repository.fullName}</p>
+          <h1>프로젝트 메모리</h1>
           <span>Knowledge revision {dashboard.data.repository.knowledgeRevision}</span>
         </div>
-        <Link className={styles.secondaryAction} to="/connect">↻ Sync repository</Link>
+        <Link className={styles.secondaryAction} to="/connect">↻ 저장소 동기화</Link>
       </header>
 
       {primaryConflict ? (
         <section className={styles.priorityCard} aria-labelledby="priority-heading">
           <div className={styles.priorityCopy}>
             <StatusBadge status={primaryConflict.outcome} />
-            <p className={styles.kicker}>Needs action before merge</p>
-            <h2 id="priority-heading">PR #{primaryConflict.prNumber} crosses an active project boundary</h2>
+            <p className={styles.kicker}>Merge 전 조치 필요</p>
+            <h2 id="priority-heading">PR #{primaryConflict.prNumber}이 활성 프로젝트 경계를 넘고 있습니다</h2>
             <p>
-              Review the existing agreement beside the proposed change, then record a Handshake or a reasoned Override.
+              기존 합의와 제안된 변경을 비교 검토한 후, Handshake를 기록하거나 근거 있는 Override를 제출하세요.
             </p>
           </div>
           <div className={styles.nextAction}>
-            <span>Next action</span>
-            <strong>Open Alignment Diff</strong>
-            <p>Confirm the evidence and choose the team response.</p>
-            <Link to={`/alignments/${primaryConflict.id}`}>Review conflict <span aria-hidden="true">→</span></Link>
+            <span>다음 조치</span>
+            <strong>Alignment Diff 열기</strong>
+            <p>근거를 확인하고 팀 응답을 선택하세요.</p>
+            <Link to={`/alignments/${primaryConflict.id}`}>충돌 검토하기 <span aria-hidden="true">→</span></Link>
           </div>
         </section>
       ) : (
         <section className={styles.clearCard}>
           <StatusBadge status="aligned" />
-          <h2>No alignment issues need action</h2>
-          <p>Recent work is consistent with the active recorded context.</p>
+          <h2>조치가 필요한 Alignment 이슈 없음</h2>
+          <p>최근 작업이 기록된 활성 맥락과 일치합니다.</p>
         </section>
       )}
 
-      <section className={styles.summaryGrid} aria-label="Project memory summary">
-        <article><span>Verified sources</span><strong>{dashboard.data.summary.sourceCount}</strong><small>immutable source versions</small></article>
-        <article><span>Knowledge nodes</span><strong>{dashboard.data.summary.knowledgeNodeCount}</strong><small>active project context</small></article>
-        <article><span>Alignment checks</span><strong>{dashboard.data.summary.alignmentCount}</strong><small>recorded analyses</small></article>
-        <article><span>Jobs in progress</span><strong>{dashboard.data.summary.openJobCount}</strong><small>polling for updates</small></article>
+      <section className={styles.summaryGrid} aria-label="프로젝트 메모리 요약">
+        <article><span>검증된 소스</span><strong>{dashboard.data.summary.sourceCount}</strong><small>불변 소스 버전</small></article>
+        <article><span>Knowledge Nodes</span><strong>{dashboard.data.summary.knowledgeNodeCount}</strong><small>활성 프로젝트 맥락</small></article>
+        <article><span>Alignment 검사</span><strong>{dashboard.data.summary.alignmentCount}</strong><small>기록된 분석</small></article>
+        <article><span>진행 중인 작업</span><strong>{dashboard.data.summary.openJobCount}</strong><small>업데이트 폴링 중</small></article>
       </section>
 
       <div className={styles.contentGrid}>
         <section className={styles.panel} aria-labelledby="context-heading">
           <div className={styles.panelHeader}>
             <div>
-              <p>Current context</p>
-              <h2 id="context-heading">Goal and decision</h2>
+              <p>현재 맥락</p>
+              <h2 id="context-heading">Goal 및 Decision</h2>
             </div>
-            <Link to="/graph">View connections</Link>
+            <Link to="/graph">연결 관계 보기</Link>
           </div>
           {knowledge.isPending ? (
-            <p className={styles.inlineState}>↻ Loading active knowledge…</p>
+            <p className={styles.inlineState}>↻ 활성 지식 로딩 중…</p>
           ) : knowledge.isError ? (
-            <button className={styles.retry} onClick={() => void knowledge.refetch()} type="button">! Retry knowledge</button>
+            <button className={styles.retry} onClick={() => void knowledge.refetch()} type="button">! 지식 재로딩</button>
           ) : (
             <div className={styles.contextList}>
               {[goal, decision].filter(Boolean).map((node) => (
@@ -128,13 +128,13 @@ export function ProjectMemoryScreen() {
         <section className={styles.panel} aria-labelledby="attention-heading">
           <div className={styles.panelHeader}>
             <div>
-              <p>Review queue</p>
-              <h2 id="attention-heading">Needs attention</h2>
+              <p>검토 대기열</p>
+              <h2 id="attention-heading">조치 필요</h2>
             </div>
-            <span>{attention.length} open</span>
+            <span>{attention.length}건 대기</span>
           </div>
           {attention.length ? (
-            <div className={styles.alignmentList} aria-label="Alignment priority">
+            <div className={styles.alignmentList} aria-label="Alignment 우선순위">
               {attention.map((item) => (
                 <Link key={item.id} to={`/alignments/${item.id}`}>
                   <span className={styles.prNumber}>PR #{item.prNumber}</span>
@@ -144,24 +144,24 @@ export function ProjectMemoryScreen() {
                 </Link>
               ))}
             </div>
-          ) : <p className={styles.inlineState}>✓ Nothing requires review.</p>}
+          ) : <p className={styles.inlineState}>✓ 검토가 필요한 항목이 없습니다.</p>}
         </section>
 
         <section className={`${styles.panel} ${styles.recentPanel}`} aria-labelledby="recent-heading">
           <div className={styles.panelHeader}>
             <div>
-              <p>Compound memory</p>
-              <h2 id="recent-heading">Recent accumulation</h2>
+              <p>누적 기억</p>
+              <h2 id="recent-heading">최근 기록</h2>
             </div>
-            <span>Newest first</span>
+            <span>최신순</span>
           </div>
           <div className={styles.timeline}>
             {dashboard.data.jobs.map((job) => (
               <article key={job.jobId}>
                 <span className={styles.timelineMark} aria-hidden="true">{job.status === "completed" ? "✓" : "↻"}</span>
                 <div>
-                  <strong>{job.eventType === "initial_sync" ? "Initial Sync" : job.eventType === "pr_analysis" ? "PR analysis" : "Merge publish"}</strong>
-                  <p>{job.status === "completed" ? "Knowledge and evidence were recorded." : `Worker is ${job.status.replace("_", " ")} at ${job.progress}%.`}</p>
+                  <strong>{job.eventType === "initial_sync" ? "Initial Sync" : job.eventType === "pr_analysis" ? "PR 분석" : "Merge 발행"}</strong>
+                  <p>{job.status === "completed" ? "지식과 근거가 기록되었습니다." : `Worker가 ${job.status.replace("_", " ")} 상태 — ${job.progress}% 진행.`}</p>
                 </div>
                 <time dateTime={job.updatedAt}>{formatTime(job.updatedAt)}</time>
               </article>

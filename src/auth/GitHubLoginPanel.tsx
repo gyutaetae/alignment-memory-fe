@@ -11,18 +11,18 @@ export function GitHubLoginPanel({ connected, onFixtureConnect }: GitHubLoginPan
     <div className={styles.panel}>
       <div>
         <span className={styles.stepIcon} aria-hidden="true">1</span>
-        <h2>Sign in with GitHub</h2>
-        <p>Authenticate your member account before selecting repository access.</p>
+        <h2>GitHub 로그인</h2>
+        <p>저장소 접근 권한을 선택하기 전에 멤버 계정을 인증합니다.</p>
       </div>
       {connected ? (
-        <span className={styles.connected}><span aria-hidden="true">✓</span> GitHub connected</span>
+        <span className={styles.connected}><span aria-hidden="true">✓</span> GitHub 연결됨</span>
       ) : isFixtureMode ? (
         <button className={styles.primary} onClick={onFixtureConnect} type="button">
-          Continue with GitHub
+          GitHub로 계속하기
         </button>
       ) : (
         <a className={styles.primary} href={getGitHubLoginUrl()}>
-          Continue with GitHub
+          GitHub로 계속하기
         </a>
       )}
     </div>
