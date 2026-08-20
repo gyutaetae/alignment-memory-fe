@@ -36,8 +36,8 @@ describe("React desktop product surface", () => {
   test("prioritizes direct conflicts before missing alignment on the dashboard", async () => {
     renderApp("/memory");
 
-    expect(await screen.findByRole("heading", { name: "Project Memory" })).toBeVisible();
-    const priorityList = screen.getByLabelText("Alignment priority");
+    expect(await screen.findByRole("heading", { name: "프로젝트 메모리" })).toBeVisible();
+    const priorityList = screen.getByLabelText("Alignment 우선순위");
     const items = within(priorityList).getAllByRole("link");
 
     expect(items[0]).toHaveTextContent("PR #7");
@@ -50,11 +50,11 @@ describe("React desktop product surface", () => {
     renderApp(alignmentPath);
 
     expect(await screen.findByRole("heading", { name: "Alignment Diff" })).toBeVisible();
-    expect(screen.queryByRole("link", { name: /open original source url/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "원본 소스 URL 열기" })).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Reveal source evidence" }));
+    fireEvent.click(screen.getByRole("button", { name: "소스 근거 보기" }));
 
-    const sourceLink = await screen.findByRole("link", { name: /open original source url/i });
+    const sourceLink = await screen.findByRole("link", { name: "원본 소스 URL 열기" });
     expect(sourceLink).toHaveAttribute("href", expect.stringContaining("github.com"));
     expect(sourceLink.closest("div")).toHaveTextContent(exactQuote);
   });
@@ -67,7 +67,7 @@ describe("React desktop product surface", () => {
     fireEvent.click(taskNode);
 
     expect(await screen.findByRole("heading", { name: "Add extension synchronization" })).toBeVisible();
-    expect(screen.getByRole("link", { name: /open alignment diff/i })).toBeVisible();
+    expect(screen.getByRole("link", { name: /Alignment Diff 열기/i })).toBeVisible();
   });
 
   test("shows original evidence inside Context Passport only after its toggle", async () => {
@@ -77,7 +77,7 @@ describe("React desktop product surface", () => {
     expect(within(passport).queryByText(exactQuote)).not.toBeInTheDocument();
 
     const originalToggle = await within(passport).findByRole("checkbox", {
-      name: "Show original evidence in Passport",
+      name: "Passport에 원본 근거 표시",
     });
     fireEvent.click(originalToggle);
 
@@ -87,20 +87,32 @@ describe("React desktop product surface", () => {
   test("submits Handshake and Override through separate forms and requests", async () => {
     renderApp(alignmentPath);
 
-    const handshakeButton = await screen.findByRole("button", { name: "Record Handshake" });
-    const overrideButton = screen.getByRole("button", { name: "Submit Override" });
+    const handshakeButton = await screen.findByRole("button", { name: "Handshake 기록" });
+    const overrideButton = screen.getByRole("button", { name: "Override 제출" });
     expect(handshakeButton.closest("form")).not.toBe(overrideButton.closest("form"));
 
     fireEvent.click(handshakeButton);
     await waitFor(() => expect(getFixtureMutationLog()).toEqual(["handshake"]));
-    expect(await screen.findByText(/handshake recorded as append-only evidence/i)).toBeVisible();
+    expect(await screen.findByText(/Handshake가 추가 전용 근거로 기록되었습니다/i)).toBeVisible();
 
-    fireEvent.change(screen.getByLabelText(/override reason/i), {
+    fireEvent.change(screen.getByLabelText(/Override 사유/i), {
       target: { value: "The proposed change is documentation-only and does not add extension sync." },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Submit Override" }));
+    fireEvent.click(screen.getByRole("button", { name: "Override 제출" }));
 
     await waitFor(() => expect(getFixtureMutationLog()).toEqual(["handshake", "override"]));
-    expect(await screen.findByText(/override recorded without deleting prior evidence/i)).toBeVisible();
+    expect(await screen.findByText(/Override가 기존 근거를 삭제하지 않고 기록되었습니다/i)).toBeVisible();
+  });
+
+  test("switches the reenacted Context Passport from Toronto English to Seoul Korean", async () => {
+    renderApp(alignmentPath);
+
+    const passport = await screen.findByRole("complementary", { name: "Context Passport" });
+    expect(await within(passport).findByText("English · 자기 선언")).toBeVisible();
+
+    fireEvent.click(within(passport).getByRole("button", { name: "서울 PM" }));
+
+    expect(await within(passport).findByText("한국어 · 자기 선언")).toBeVisible();
+    expect(within(passport).getByText(/현재 합의는 MVP를 저장소 중심으로 유지합니다/)).toBeVisible();
   });
 });

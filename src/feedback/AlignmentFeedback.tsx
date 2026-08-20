@@ -10,7 +10,13 @@ const handshakeOptions: Array<{ value: Handshake["response"]; label: string; hel
   { value: "disagree", label: "반대", help: "이 변경에 대한 나의 입장이 다릅니다." },
 ];
 
-export function AlignmentFeedback({ alignmentId }: { alignmentId: string }) {
+export function AlignmentFeedback({
+  alignmentId,
+  sourceLanguage,
+}: {
+  alignmentId: string;
+  sourceLanguage: string;
+}) {
   const [response, setResponse] = useState<Handshake["response"]>("agree");
   const [message, setMessage] = useState("");
   const [overrideType, setOverrideType] = useState<Override["overrideType"]>("false_positive");
@@ -23,7 +29,7 @@ export function AlignmentFeedback({ alignmentId }: { alignmentId: string }) {
   const submitHandshake = async (event: FormEvent) => {
     event.preventDefault();
     setHandshakeSaved(false);
-    await handshake.mutateAsync({ response, message: message || undefined, sourceLanguage: "en" });
+    await handshake.mutateAsync({ response, message: message || undefined, sourceLanguage });
     setHandshakeSaved(true);
   };
 

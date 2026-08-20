@@ -39,6 +39,42 @@
   color: var(--accent);
 }
 
+.roleBlock {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.roleBlock > span {
+  color: var(--ink-muted);
+  font-size: 0.65rem;
+  font-weight: 750;
+}
+
+.roleSwitcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.roleSwitcher button {
+  min-height: 2.2rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+  color: var(--ink-muted);
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.roleSwitcher .activeRole {
+  border-color: var(--accent);
+  background: var(--surface-subtle);
+  color: var(--accent);
+}
+
 .attributes {
   display: grid;
   margin: 0;

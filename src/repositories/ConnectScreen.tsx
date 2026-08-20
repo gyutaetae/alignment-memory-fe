@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { GitHubLoginPanel } from "../auth/GitHubLoginPanel";
-import { isFixtureMode } from "../shared/api/client";
+import { getGitHubInstallUrl, isFixtureMode } from "../shared/api/client";
 import { AsyncState } from "../shared/components/AsyncState";
 import { StatusBadge } from "../shared/components/StatusBadge";
 import { useInitialSync, useJob, useRepositories } from "./api";
@@ -14,14 +14,14 @@ export function ConnectScreen() {
   const [installed, setInstalled] = useState(false);
   const [repositoryId, setRepositoryId] = useState("");
   const [jobId, setJobId] = useState<string | null>(null);
-  const repositories = useRepositories();
+  const repositories = useRepositories(connected);
   const sync = useInitialSync();
   const job = useJob(jobId);
 
-  if (repositories.isPending) {
+  if (connected && repositories.isPending) {
     return <AsyncState kind="loading" title="연결 상태 확인 중" message="GitHub 저장소 및 설치 접근 권한을 확인하고 있습니다." />;
   }
-  if (repositories.isError) {
+  if (connected && repositories.isError) {
     return (
       <AsyncState
         actionLabel="다시 시도"
@@ -33,7 +33,9 @@ export function ConnectScreen() {
     );
   }
 
-  const available = repositories.data.repositories;
+  const available = repositories.data?.repositories ?? [];
+  const appInstalled = installed || (!isFixtureMode && available.length > 0);
+  const installUrl = getGitHubInstallUrl();
   const selectedRepositoryId = repositoryId || available[0]?.id || "";
 
   const handleSync = async () => {
@@ -61,16 +63,18 @@ export function ConnectScreen() {
               <p>선택한 저장소에 읽기 및 workflow dispatch 접근 권한을 부여합니다.</p>
             </div>
           </div>
-          {installed ? (
+          {appInstalled ? (
             <span className={styles.complete}><span aria-hidden="true">✓</span> App 설치 완료</span>
+          ) : !isFixtureMode && installUrl ? (
+            <a className={styles.installLink} href={installUrl}>GitHub App 설치</a>
           ) : (
-            <button disabled={!connected} onClick={() => setInstalled(true)} type="button">
+            <button disabled={!connected || !isFixtureMode} onClick={() => setInstalled(true)} type="button">
               GitHub App 설치
             </button>
           )}
         </section>
 
-        <section className={`${styles.stepCard} ${!installed ? styles.disabled : ""}`}>
+        <section className={`${styles.stepCard} ${!appInstalled ? styles.disabled : ""}`}>
           <div className={styles.stepCopy}>
             <span className={styles.stepIcon} aria-hidden="true">3</span>
             <div>
@@ -82,7 +86,7 @@ export function ConnectScreen() {
             <label className={styles.selectLabel}>
               <span>저장소</span>
               <select
-                disabled={!installed}
+                disabled={!appInstalled}
                 onChange={(event) => setRepositoryId(event.target.value)}
                 value={selectedRepositoryId}
               >
@@ -96,7 +100,7 @@ export function ConnectScreen() {
           )}
         </section>
 
-        <section className={`${styles.syncCard} ${!installed ? styles.disabled : ""}`}>
+        <section className={`${styles.syncCard} ${!appInstalled ? styles.disabled : ""}`}>
           <div className={styles.syncHeader}>
             <div className={styles.stepCopy}>
               <span className={styles.stepIcon} aria-hidden="true">4</span>
@@ -106,7 +110,7 @@ export function ConnectScreen() {
               </div>
             </div>
             <button
-              disabled={!installed || !selectedRepositoryId || sync.isPending || Boolean(jobId)}
+              disabled={!appInstalled || !selectedRepositoryId || sync.isPending || Boolean(jobId)}
               onClick={() => void handleSync()}
               type="button"
             >

@@ -339,8 +339,14 @@ export async function fixtureGetAlignment(requestedId: string) {
   return clone({ ...baseAlignment, handshakes, overrides });
 }
 
-export async function fixtureGetPassport() {
-  return clone(passport);
+export async function fixtureGetPassport(language = "en") {
+  return clone({
+    ...passport,
+    language,
+    content: language === "ko"
+      ? "현재 합의는 MVP를 저장소 중심으로 유지합니다. PR에는 변경 범위를 좁히거나 기존 결정을 명시적으로 대체해야 합니다."
+      : passport.content,
+  });
 }
 
 export async function fixtureGetGraph(): Promise<KnowledgeGraph> {

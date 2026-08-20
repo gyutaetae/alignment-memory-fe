@@ -5,6 +5,7 @@ import { AlignmentFeedback } from "../feedback/AlignmentFeedback";
 import { ContextPassportPanel } from "../passport/ContextPassportPanel";
 import { AsyncState } from "../shared/components/AsyncState";
 import { StatusBadge } from "../shared/components/StatusBadge";
+import { demoPersonas, type DemoPersonaId } from "../shared/demoPersonas";
 import { useAlignment } from "./api";
 import styles from "./AlignmentDetailScreen.module.css";
 
@@ -12,6 +13,8 @@ export function AlignmentDetailScreen() {
   const { alignmentId } = useParams();
   const alignment = useAlignment(alignmentId);
   const [revealedEvidence, setRevealedEvidence] = useState<Set<string>>(() => new Set());
+  const [personaId, setPersonaId] = useState<DemoPersonaId>("toronto-developer");
+  const persona = demoPersonas[personaId];
 
   if (alignment.isPending) {
     return <AsyncState kind="loading" title="Alignment Diff 로딩 중" message="기존 합의, 제안된 변경, 검증된 근거를 불러오고 있습니다." />;
@@ -136,10 +139,15 @@ export function AlignmentDetailScreen() {
           ) : null}
         </div>
 
-        <ContextPassportPanel alignmentId={alignment.data.id} evidence={allEvidence} />
+        <ContextPassportPanel
+          alignmentId={alignment.data.id}
+          evidence={allEvidence}
+          onPersonaChange={setPersonaId}
+          persona={persona}
+        />
       </div>
 
-      <AlignmentFeedback alignmentId={alignment.data.id} />
+      <AlignmentFeedback alignmentId={alignment.data.id} sourceLanguage={persona.language} />
     </div>
   );
 }

@@ -1,24 +1,23 @@
 import { useState } from "react";
 
 import type { Evidence } from "../shared/types/api";
+import { demoPersonas, type DemoPersona, type DemoPersonaId } from "../shared/demoPersonas";
 import { useContextPassport } from "./api";
 import styles from "./ContextPassportPanel.module.css";
-
-const declaredContext = {
-  timezone: "America/Toronto · UTC−04:00",
-  role: "Product manager",
-  ownership: "MVP scope and acceptance",
-};
 
 export function ContextPassportPanel({
   alignmentId,
   evidence,
+  persona,
+  onPersonaChange,
 }: {
   alignmentId: string;
   evidence: Evidence[];
+  persona: DemoPersona;
+  onPersonaChange: (persona: DemoPersonaId) => void;
 }) {
   const [showOriginal, setShowOriginal] = useState(false);
-  const passport = useContextPassport(alignmentId, "en");
+  const passport = useContextPassport(alignmentId, persona.language);
 
   return (
     <aside className={styles.panel} aria-labelledby="passport-heading">
@@ -28,6 +27,23 @@ export function ContextPassportPanel({
           <h2 id="passport-heading">Context Passport</h2>
         </div>
         <span className={styles.passportIcon} aria-hidden="true">▣</span>
+      </div>
+
+      <div className={styles.roleBlock}>
+        <span>시연 역할 · 실제 분산 협업 배경을 재연</span>
+        <div className={styles.roleSwitcher}>
+          {Object.values(demoPersonas).map((candidate) => (
+            <button
+              aria-pressed={persona.id === candidate.id}
+              className={persona.id === candidate.id ? styles.activeRole : ""}
+              key={candidate.id}
+              onClick={() => onPersonaChange(candidate.id)}
+              type="button"
+            >
+              {candidate.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {passport.isPending ? <p className={styles.state}>↻ 맥락 정보 로딩 중…</p> : null}
@@ -40,10 +56,10 @@ export function ContextPassportPanel({
       {passport.data ? (
         <>
           <dl className={styles.attributes}>
-            <div><dt>선호 언어</dt><dd>{passport.data.language === "en" ? "English" : passport.data.language === "ko" ? "한국어" : passport.data.language} · 자기 선언</dd></div>
-            <div><dt>시간대</dt><dd>{declaredContext.timezone} · 자기 선언</dd></div>
-            <div><dt>역할</dt><dd>{declaredContext.role}</dd></div>
-            <div><dt>담당 범위</dt><dd>{declaredContext.ownership}</dd></div>
+            <div><dt>선호 언어</dt><dd>{persona.languageLabel} · 자기 선언</dd></div>
+            <div><dt>시간대</dt><dd>{persona.timezone} · 자기 선언</dd></div>
+            <div><dt>역할</dt><dd>{persona.role}</dd></div>
+            <div><dt>담당 범위</dt><dd>{persona.ownership}</dd></div>
           </dl>
 
           <div className={styles.handoff}>
