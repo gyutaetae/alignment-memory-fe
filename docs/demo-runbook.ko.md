@@ -15,10 +15,12 @@ Alignment Memory는 번역기가 아니라, 서로 다른 시간대·언어·팀
 
 1. 브라우저 확대를 110~125%로 맞추고 개인 알림을 끈다.
 2. 다음 탭만 순서대로 연다.
-   - Alignment Memory 라이브 Preview
-   - GitHub의 `demo-cross-border-agreement.md`
-   - 충돌 데모 PR의 Actions 화면
-3. Preview에서 GitHub 로그인과 저장소 연결을 완료한다.
+   - [Alignment Memory 프로덕션](https://alignment-memory-fe.vercel.app)
+   - [한국어 결정 원문](https://github.com/gyutaetae/alignment-memory-be/blob/main/docs/demo-cross-border-agreement.md)
+   - [Direct Conflict PR](https://github.com/gyutaetae/alignment-memory-be/pull/16)
+   - [Analyze 성공 실행](https://github.com/gyutaetae/alignment-memory-be/actions/runs/32413322000)
+   - [Publish 성공 실행](https://github.com/gyutaetae/alignment-memory-be/actions/runs/32413387501)
+3. 프로덕션에서 GitHub 로그인과 저장소 연결을 완료한다.
 4. Context Passport가 네 팀원 역할로 전환되고 표시 언어를 한국어·영어·일본어·베트남어 중에서 독립적으로 선택할 수 있는지 확인한다.
 5. 충돌 데모 PR과 분석 결과를 미리 생성하되, 영상에서는 Actions 재실행 또는 결과 갱신으로 실제 동작을 보여준다.
 6. 비밀키, `.env`, 브라우저 주소창의 인증 파라미터는 화면에 노출하지 않는다.
@@ -79,7 +81,7 @@ Alignment Memory는 번역기가 아니라, 서로 다른 시간대·언어·팀
 
 ### 2:35–3:25 — AI가 의미 충돌과 근거를 탐지
 
-화면: Actions 완료 → Alignment Diff의 `Direct Conflict` → 한국어 원문 인용과 소스 링크.
+화면: [Actions 완료](https://github.com/gyutaetae/alignment-memory-be/actions/runs/32413322000) → [PR 댓글의 `Direct Conflict`](https://github.com/gyutaetae/alignment-memory-be/pull/16#issuecomment-5360243431) → 한국어 원문 인용과 소스 링크.
 
 멘트:
 
