@@ -83,6 +83,7 @@
 }
 
 .stepCard button,
+.installLink,
 .syncCard > .syncHeader > button,
 .inlineError button {
   min-height: 2.45rem;
@@ -95,6 +96,12 @@
   font-size: 0.8rem;
   font-weight: 750;
   white-space: nowrap;
+}
+
+.installLink {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .stepCard button:disabled,

@@ -69,6 +69,10 @@ export function getGitHubLoginUrl() {
   return `${supabaseUrl}/auth/v1/authorize?provider=github&redirect_to=${redirectTo}`;
 }
 
+export function getGitHubInstallUrl() {
+  return import.meta.env.VITE_GITHUB_APP_INSTALL_URL || "";
+}
+
 export async function listRepositories(signal?: AbortSignal): Promise<{ repositories: Repository[] }> {
   if (isFixtureMode) return fixtureListRepositories();
   return request("/api/v1/repositories", { signal });
@@ -99,9 +103,20 @@ export async function getContextPassport(
   language = "en",
   signal?: AbortSignal,
 ): Promise<ContextPassport> {
-  if (isFixtureMode) return fixtureGetPassport();
+  if (isFixtureMode) return fixtureGetPassport(language);
   const query = new URLSearchParams({ language });
   return request(`/api/v1/alignments/${alignmentId}/context-passport?${query}`, { signal });
+}
+
+export async function generateContextPassport(
+  alignmentId: string,
+  language: string,
+): Promise<ContextPassport> {
+  if (isFixtureMode) return fixtureGetPassport(language);
+  return request(`/api/v1/alignments/${alignmentId}/context-passport/generate`, {
+    method: "POST",
+    body: JSON.stringify({ language }),
+  });
 }
 
 export async function getGraph(repositoryId: string, signal?: AbortSignal): Promise<KnowledgeGraph> {

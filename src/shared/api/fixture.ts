@@ -34,8 +34,9 @@ const repository: Repository = {
 
 const evidence = {
   sourceVersionId,
-  url: "https://github.com/fixture-owner/alignment-memory-demo/blob/main/docs/adr.md",
-  exactQuote: "Browser extensions are out of scope for the MVP.",
+  url: "https://github.com/gyutaetae/alignment-memory-be/blob/main/docs/demo-cross-border-agreement.md",
+  exactQuote:
+    "원문 사용자 메시지는 외부 분석 서비스에 저장하지 않는다. 디버깅에는 익명화된 집계 지표와 재현 가능한 오류 코드만 사용한다.",
   role: "contradicts" as const,
   verified: true,
 };
@@ -60,9 +61,9 @@ const baseAlignment: AlignmentDetail = {
       contradicts: true,
       uncertain: false,
       explanation:
-        "The proposed browser extension synchronization conflicts with the active repository-only MVP boundary.",
+        "The English PR proposes storing raw user prompts in an external analytics service, which conflicts with the active Korean privacy decision.",
       recommendedAction:
-        "Keep extension sync out of this PR, or supersede the active decision with a recorded reason.",
+        "Remove raw prompt storage, or supersede the privacy decision with an explicit reason and human approval.",
       evidence: [evidence],
     },
   ],
@@ -147,10 +148,10 @@ const graphNodes: GraphNode[] = [
   },
   {
     id: decisionNodeId,
-    logicalKey: "exclude-browser-extension",
+    logicalKey: "privacy-safe-debugging",
     nodeType: "decision",
-    title: "Exclude browser extensions",
-    summary: "Keep the MVP repository-native and desktop web only.",
+    title: "Privacy-safe debugging",
+    summary: "Use anonymized metrics and reproducible error codes instead of raw user messages.",
     status: "active",
     revision: 12,
     evidence: [evidence],
@@ -167,10 +168,10 @@ const graphNodes: GraphNode[] = [
   },
   {
     id: "50000000-0000-0000-0000-000000000004",
-    logicalKey: "add-extension-sync",
+    logicalKey: "add-raw-prompt-logging",
     nodeType: "task",
-    title: "Add extension synchronization",
-    summary: "Proposed work in PR #7 that crosses the active product boundary.",
+    title: "Add raw prompt logging",
+    summary: "English PR proposal to store raw prompts for asynchronous remote debugging.",
     status: "disputed",
     revision: 12,
     evidence: [evidence],
@@ -246,9 +247,9 @@ const passport: ContextPassport = {
   profileId: "00000000-0000-0000-0000-000000000001",
   language: "en",
   content:
-    "The current decision keeps the MVP repository-native. PR #7 needs either a narrower change or an explicit superseding decision.",
+    "The active privacy decision prohibits storing raw user messages in external analytics. PR #7 must use anonymized metrics or explicitly supersede that decision.",
   sourceVersionIds: [sourceVersionId],
-  ambiguities: ["Is extension sync intended to replace the repository-only workflow or follow it later?"],
+  ambiguities: ["Can the remote debugging goal be met with anonymized metrics and reproducible error codes?"],
   aiRunId: baseAlignment.aiRunId,
   createdAt: fixtureNow,
 };
@@ -339,8 +340,18 @@ export async function fixtureGetAlignment(requestedId: string) {
   return clone({ ...baseAlignment, handshakes, overrides });
 }
 
-export async function fixtureGetPassport() {
-  return clone(passport);
+export async function fixtureGetPassport(language = "en") {
+  const localizedContent: Record<string, string> = {
+    ko: "현재 개인정보 보호 결정은 외부 분석 서비스에 원문 사용자 메시지를 저장하지 않도록 규정합니다. PR #7은 익명화된 지표를 사용하거나 기존 결정을 명시적으로 대체해야 합니다.",
+    en: passport.content,
+    ja: "現在のプライバシー方針では、外部分析サービスへのユーザーメッセージ原文の保存を禁止しています。PR #7 は匿名化された指標を使用するか、既存の決定を明示的に更新する必要があります。",
+    vi: "Quyết định hiện tại về quyền riêng tư không cho phép lưu tin nhắn gốc của người dùng trong dịch vụ phân tích bên ngoài. PR #7 phải dùng số liệu đã ẩn danh hoặc thay thế quyết định hiện tại một cách rõ ràng.",
+  };
+  return clone({
+    ...passport,
+    language,
+    content: localizedContent[language] ?? passport.content,
+  });
 }
 
 export async function fixtureGetGraph(): Promise<KnowledgeGraph> {

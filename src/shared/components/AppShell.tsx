@@ -22,7 +22,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </span>
         </NavLink>
         <div className={styles.topbarMeta}>
-          {isFixtureMode ? <span className={styles.fixture}>◆ Fixture 데이터</span> : null}
+          <span className={styles.fixture}>
+            {isFixtureMode ? "◆ Fixture 데이터" : "● Live API"}
+          </span>
           <span className={styles.identity} aria-label="로그인된 프로필">
             KG
           </span>

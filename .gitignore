@@ -4,3 +4,4 @@ dist/
 .npm-cache/
 .DS_Store
 .vercel
+.video-work/

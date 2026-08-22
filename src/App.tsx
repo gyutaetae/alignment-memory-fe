@@ -4,6 +4,7 @@ import { AlignmentDetailScreen } from "./alignment/AlignmentDetailScreen";
 import { ProjectMemoryScreen } from "./dashboard/ProjectMemoryScreen";
 import { KnowledgeGraphScreen } from "./graph/KnowledgeGraphScreen";
 import { ConnectScreen } from "./repositories/ConnectScreen";
+import { isFixtureMode } from "./shared/api/client";
 import { AppShell } from "./shared/components/AppShell";
 
 function ProductLayout() {
@@ -18,7 +19,7 @@ export function App() {
   return (
     <Routes>
       <Route element={<ProductLayout />}>
-        <Route path="/" element={<Navigate to="/memory" replace />} />
+        <Route path="/" element={<Navigate to={isFixtureMode ? "/memory" : "/connect"} replace />} />
         <Route path="/connect" element={<ConnectScreen />} />
         <Route path="/memory" element={<ProjectMemoryScreen />} />
         <Route path="/alignments/:alignmentId" element={<AlignmentDetailScreen />} />

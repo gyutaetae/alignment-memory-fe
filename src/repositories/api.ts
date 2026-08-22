@@ -5,10 +5,11 @@ import type { JobStatus } from "../shared/types/api";
 
 const terminalStatuses = new Set<JobStatus>(["completed", "failed"]);
 
-export function useRepositories() {
+export function useRepositories(enabled = true) {
   return useQuery({
     queryKey: ["repositories"],
     queryFn: ({ signal }) => listRepositories(signal),
+    enabled,
   });
 }
 
