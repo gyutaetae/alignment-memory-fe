@@ -1,23 +1,33 @@
 import { useState } from "react";
 
 import type { Evidence } from "../shared/types/api";
-import { demoPersonas, type DemoPersona, type DemoPersonaId } from "../shared/demoPersonas";
+import {
+  collaborationLanguages,
+  demoPersonas,
+  type CollaborationLanguage,
+  type DemoPersona,
+  type DemoPersonaId,
+} from "../shared/demoPersonas";
 import { useContextPassport } from "./api";
 import styles from "./ContextPassportPanel.module.css";
 
 export function ContextPassportPanel({
   alignmentId,
   evidence,
+  language,
+  onLanguageChange,
   persona,
   onPersonaChange,
 }: {
   alignmentId: string;
   evidence: Evidence[];
+  language: CollaborationLanguage;
+  onLanguageChange: (language: CollaborationLanguage) => void;
   persona: DemoPersona;
   onPersonaChange: (persona: DemoPersonaId) => void;
 }) {
   const [showOriginal, setShowOriginal] = useState(false);
-  const passport = useContextPassport(alignmentId, persona.language);
+  const passport = useContextPassport(alignmentId, language);
 
   return (
     <aside className={styles.panel} aria-labelledby="passport-heading">
@@ -30,7 +40,7 @@ export function ContextPassportPanel({
       </div>
 
       <div className={styles.roleBlock}>
-        <span>시연 역할 · 실제 분산 협업 배경을 재연</span>
+        <span>실제 분산 협업 위치와 역할</span>
         <div className={styles.roleSwitcher}>
           {Object.values(demoPersonas).map((candidate) => (
             <button
@@ -46,6 +56,19 @@ export function ContextPassportPanel({
         </div>
       </div>
 
+      <label className={styles.languageSelect}>
+        <span>Passport 표시 언어 · 직접 선택</span>
+        <select
+          aria-label="Passport 표시 언어"
+          onChange={(event) => onLanguageChange(event.target.value as CollaborationLanguage)}
+          value={language}
+        >
+          {collaborationLanguages.map((candidate) => (
+            <option key={candidate.id} value={candidate.id}>{candidate.label}</option>
+          ))}
+        </select>
+      </label>
+
       {passport.isPending ? <p className={styles.state}>↻ 맥락 정보 로딩 중…</p> : null}
       {passport.isError ? (
         <div className={styles.state} role="alert">
@@ -56,10 +79,11 @@ export function ContextPassportPanel({
       {passport.data ? (
         <>
           <dl className={styles.attributes}>
-            <div><dt>선호 언어</dt><dd>{persona.languageLabel} · 자기 선언</dd></div>
-            <div><dt>시간대</dt><dd>{persona.timezone} · 자기 선언</dd></div>
+            <div><dt>표시 언어</dt><dd>{collaborationLanguages.find((item) => item.id === language)?.label}</dd></div>
+            <div><dt>작업 시간대</dt><dd>{persona.timezone} · 자기 선언</dd></div>
             <div><dt>역할</dt><dd>{persona.role}</dd></div>
             <div><dt>담당 범위</dt><dd>{persona.ownership}</dd></div>
+            <div><dt>팀 인수인계 원칙</dt><dd>{persona.handoff}</dd></div>
           </dl>
 
           <div className={styles.handoff}>

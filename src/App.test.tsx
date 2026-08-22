@@ -7,7 +7,8 @@ import { App } from "./App";
 import { getFixtureMutationLog, resetFixtureApi } from "./shared/api/fixture";
 
 const alignmentPath = "/alignments/40000000-0000-0000-0000-000000000001";
-const exactQuote = "Browser extensions are out of scope for the MVP.";
+const exactQuote =
+  "원문 사용자 메시지는 외부 분석 서비스에 저장하지 않는다. 디버깅에는 익명화된 집계 지표와 재현 가능한 오류 코드만 사용한다.";
 
 function renderApp(path: string) {
   const queryClient = new QueryClient({
@@ -63,10 +64,10 @@ describe("React desktop product surface", () => {
     renderApp("/graph?focus=50000000-0000-0000-0000-000000000002");
 
     expect(await screen.findByRole("heading", { name: "Knowledge Graph" })).toBeVisible();
-    const taskNode = await screen.findByText("Add extension synchronization");
+    const taskNode = await screen.findByText("Add raw prompt logging");
     fireEvent.click(taskNode);
 
-    expect(await screen.findByRole("heading", { name: "Add extension synchronization" })).toBeVisible();
+    expect(await screen.findByRole("heading", { name: "Add raw prompt logging" })).toBeVisible();
     expect(screen.getByRole("link", { name: /Alignment Diff 열기/i })).toBeVisible();
   });
 
@@ -104,15 +105,19 @@ describe("React desktop product surface", () => {
     expect(await screen.findByText(/Override가 기존 근거를 삭제하지 않고 기록되었습니다/i)).toBeVisible();
   });
 
-  test("switches the reenacted Context Passport from Toronto English to Seoul Korean", async () => {
+  test("switches role and language independently across the distributed team", async () => {
     renderApp(alignmentPath);
 
     const passport = await screen.findByRole("complementary", { name: "Context Passport" });
-    expect(await within(passport).findByText("English · 자기 선언")).toBeVisible();
+    expect(await within(passport).findByText("English")).toBeVisible();
 
-    fireEvent.click(within(passport).getByRole("button", { name: "서울 PM" }));
+    fireEvent.click(within(passport).getByRole("button", { name: "지우 · Tokyo" }));
+    expect(within(passport).getByText("Product manager")).toBeVisible();
 
-    expect(await within(passport).findByText("한국어 · 자기 선언")).toBeVisible();
-    expect(within(passport).getByText(/현재 합의는 MVP를 저장소 중심으로 유지합니다/)).toBeVisible();
+    fireEvent.change(within(passport).getByLabelText("Passport 표시 언어"), {
+      target: { value: "ja" },
+    });
+
+    expect(await within(passport).findByText(/現在のプライバシー方針/)).toBeVisible();
   });
 });

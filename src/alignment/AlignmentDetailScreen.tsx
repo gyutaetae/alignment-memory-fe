@@ -5,7 +5,11 @@ import { AlignmentFeedback } from "../feedback/AlignmentFeedback";
 import { ContextPassportPanel } from "../passport/ContextPassportPanel";
 import { AsyncState } from "../shared/components/AsyncState";
 import { StatusBadge } from "../shared/components/StatusBadge";
-import { demoPersonas, type DemoPersonaId } from "../shared/demoPersonas";
+import {
+  demoPersonas,
+  type CollaborationLanguage,
+  type DemoPersonaId,
+} from "../shared/demoPersonas";
 import { useAlignment } from "./api";
 import styles from "./AlignmentDetailScreen.module.css";
 
@@ -13,7 +17,8 @@ export function AlignmentDetailScreen() {
   const { alignmentId } = useParams();
   const alignment = useAlignment(alignmentId);
   const [revealedEvidence, setRevealedEvidence] = useState<Set<string>>(() => new Set());
-  const [personaId, setPersonaId] = useState<DemoPersonaId>("toronto-developer");
+  const [personaId, setPersonaId] = useState<DemoPersonaId>("toronto-backend");
+  const [passportLanguage, setPassportLanguage] = useState<CollaborationLanguage>("en");
   const persona = demoPersonas[personaId];
 
   if (alignment.isPending) {
@@ -142,12 +147,14 @@ export function AlignmentDetailScreen() {
         <ContextPassportPanel
           alignmentId={alignment.data.id}
           evidence={allEvidence}
+          language={passportLanguage}
+          onLanguageChange={setPassportLanguage}
           onPersonaChange={setPersonaId}
           persona={persona}
         />
       </div>
 
-      <AlignmentFeedback alignmentId={alignment.data.id} sourceLanguage={persona.language} />
+      <AlignmentFeedback alignmentId={alignment.data.id} sourceLanguage={passportLanguage} />
     </div>
   );
 }
